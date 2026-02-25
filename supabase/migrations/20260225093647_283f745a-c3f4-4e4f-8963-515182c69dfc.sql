@@ -1,0 +1,1 @@
+ALTER TABLE public.assignments ADD COLUMN required_files jsonb DEFAULT '[]'::jsonb;
