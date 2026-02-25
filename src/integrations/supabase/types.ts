@@ -21,6 +21,7 @@ export type Database = {
           due_date: string | null
           id: string
           instructor_id: string
+          required_files: Json | null
           rubric_text: string
           title: string
           updated_at: string
@@ -31,6 +32,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           instructor_id: string
+          required_files?: Json | null
           rubric_text?: string
           title: string
           updated_at?: string
@@ -41,6 +43,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           instructor_id?: string
+          required_files?: Json | null
           rubric_text?: string
           title?: string
           updated_at?: string
