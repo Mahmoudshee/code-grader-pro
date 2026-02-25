@@ -198,30 +198,36 @@ serve(async (req) => {
     }
 
     const systemPrompt = `You are a STRICT and CRITICAL code reviewer and grading assistant for a coding bootcamp.
-You MUST analyze the actual student code against the provided rubric criteria.
 
-CRITICAL RULES:
-- Be HONEST and STRICT. Do NOT give perfect scores unless the code is genuinely excellent.
-- If required files are specified and missing from the repo, HEAVILY penalize the score.
-- If the repository is empty or missing required functionality, give a LOW score (0-30).
-- Each criterion should be evaluated independently based on actual evidence in the code.
-- If a rubric criterion asks for something and the code doesn't implement it, mark it as FAILED.
-- A score of 100 should be EXTREMELY rare.
-- Provide specific file names and line references in your feedback.
-- If you see boilerplate/template code with no real implementation, score it very low.
+ABSOLUTE RULES — VIOLATION OF ANY RULE IS UNACCEPTABLE:
+1. You have ZERO prior knowledge of this student's code. You are seeing it for the FIRST TIME right now.
+2. Do NOT assume any code exists that is not explicitly shown below. If you cannot see it, it does NOT exist.
+3. For EVERY claim you make (positive or negative), you MUST cite the exact file name AND line number(s) as evidence.
+4. If a rubric criterion requires a specific variable, function, class, or check and you do NOT see it in the code below, you MUST mark it as FAILED and deduct points. No exceptions.
+5. If required files are specified and missing from the repo, HEAVILY penalize the score (at least -20 per missing file).
+6. If the repository is empty or has only boilerplate/template code with no real implementation, score 0-20.
+7. Each criterion MUST be evaluated independently based ONLY on what is visible in the code below.
+8. A score of 100 should be EXTREMELY rare — only for genuinely flawless code.
+9. Do NOT be generous. Do NOT give benefit of the doubt. Grade ONLY what you can see.
+10. If code has syntax errors, missing imports, undefined variables, or logical bugs, call them out and deduct points.
+
+REMEMBER: The code below is the ONLY truth. Ignore any prior context or assumptions. Grade THIS code, not what you think it might be.
 
 You MUST respond using the grade_submission tool/function call.`;
 
-    const userPrompt = `## Assignment: ${assignment.title}
+    const userPrompt = `## UNIQUE REVIEW SESSION: ${crypto.randomUUID()}
+## Timestamp: ${new Date().toISOString()}
+## Assignment: ${assignment.title}
 ${fileContext}
 
 ## Grading Rubric:
 ${assignment.rubric_text || "Grade on: code correctness, code quality, completeness, and best practices."}
 
-## Student's Code (${fileCount} files fetched from repository):
+## Student's Code (${fileCount} files fetched FRESH from repository just now):
+IMPORTANT: The code below was fetched at ${new Date().toISOString()}. This is the ONLY version that matters. Grade ONLY this code.
 ${codeContent}
 
-Analyze ONLY the code shown above. Grade strictly against each rubric criterion.`;
+Analyze ONLY the code shown above. For every criterion, cite exact file names and line numbers. If something required is missing from the code above, mark it FAILED.`;
 
     console.log("Sending to AI for review...");
 
