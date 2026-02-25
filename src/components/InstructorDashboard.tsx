@@ -277,8 +277,9 @@ const InstructorDashboard = () => {
                       <CardTitle className="text-lg">{a.title}</CardTitle>
                       {a.description && <CardDescription className="line-clamp-2">{a.description}</CardDescription>}
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => openEdit(a)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="outline" size="sm" onClick={() => openEdit(a)}>
+                      <Pencil className="mr-1 h-3 w-3" />
+                      Edit
                     </Button>
                   </div>
                 </CardHeader>
