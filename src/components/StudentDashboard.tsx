@@ -68,7 +68,7 @@ const StudentDashboard = () => {
 
     setSubmitting(true);
     const existingSubs = submissions[assignmentId] || [];
-    const attemptNumber = existingSubs.length + 1;
+    const attemptNumber = 1;
 
     const { data: submission, error } = await supabase
       .from("submissions")
@@ -163,30 +163,32 @@ const StudentDashboard = () => {
                   )}
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Submit repo */}
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="https://github.com/username/repo"
-                      value={selectedAssignment?.id === assignment.id ? repoUrl : (latestSub?.repo_url || "")}
-                      onChange={(e) => {
-                        setSelectedAssignment(assignment);
-                        setRepoUrl(e.target.value);
-                      }}
-                      onFocus={() => {
-                        setSelectedAssignment(assignment);
-                        if (!repoUrl) setRepoUrl(latestSub?.repo_url || "");
-                      }}
-                      className="font-mono text-sm"
-                    />
-                    <Button
-                      onClick={() => handleSubmit(assignment.id)}
-                      disabled={submitting || selectedAssignment?.id !== assignment.id || !repoUrl.trim()}
-                      variant="secondary"
-                    >
-                      <Send className="mr-2 h-4 w-4" />
-                      Submit
-                    </Button>
-                  </div>
+                  {/* Submit repo (only if no submission yet) */}
+                  {!latestSub ? (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://github.com/username/repo"
+                        value={selectedAssignment?.id === assignment.id ? repoUrl : ""}
+                        onChange={(e) => {
+                          setSelectedAssignment(assignment);
+                          setRepoUrl(e.target.value);
+                        }}
+                        className="font-mono text-sm"
+                      />
+                      <Button
+                        onClick={() => handleSubmit(assignment.id)}
+                        disabled={submitting || selectedAssignment?.id !== assignment.id || !repoUrl.trim()}
+                        variant="secondary"
+                      >
+                        <Send className="mr-2 h-4 w-4" />
+                        Submit
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="font-mono text-sm text-muted-foreground truncate">
+                      {latestSub.repo_url}
+                    </p>
+                  )}
 
                   {/* Latest submission status */}
                   {latestSub && (
@@ -201,7 +203,7 @@ const StudentDashboard = () => {
                             {latestSub.status} · Attempt #{latestSub.attempt_number}
                           </span>
                         </div>
-                        {(latestSub.status === "pending" || latestSub.status === "completed" || latestSub.status === "error") && (
+                        {latestSub.status !== "reviewing" && (
                           <Button
                             size="sm"
                             onClick={() => handleCheckCode(latestSub)}
@@ -212,6 +214,8 @@ const StudentDashboard = () => {
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Reviewing...
                               </>
+                            ) : latestSub.status === "completed" ? (
+                              "Re-check Code"
                             ) : (
                               "Check Code"
                             )}
